@@ -3,8 +3,8 @@ import User from "../Model/User";
 import jwt from "jsonwebtoken";
 
 const loginUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const result = await User.findOne({ email: email });
+  const { userName, password } = req.body;
+  const result = await User.findOne({ userName: userName });
   if (!result) {
     res.status(303).json({ msg: "User not found !" });
   } else {
@@ -19,15 +19,15 @@ const loginUser = async (req: Request, res: Response) => {
 };
 
 const registerUser = async (req: Request, res: Response) => {
-  const { firstName, lastName, email, password } = req.body;
-  const result = await User.findOne({ email: email });
+  const { firstName, lastName, userName, password } = req.body;
+  const result = await User.findOne({ userName: userName });
   if (result != null) {
     res.status(400).json({ msg: "user already registered!" });
   } else {
     const newUser = new User({
       firstName: firstName,
       lastName: lastName,
-      email: email,
+      userName: userName,
       password: password,
     });
     await newUser.save();
