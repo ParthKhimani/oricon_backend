@@ -12,7 +12,7 @@ const loginUser = async (req: Request, res: Response) => {
     const passCheck = password.localeCompare(result.password);
     if (passCheck == 0) {
       const token = jwt.sign({ role: "admin" }, "secret-key");
-      res.status(200).json({ msg: "User Logged In !", token });
+
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -35,6 +35,7 @@ const loginUser = async (req: Request, res: Response) => {
           console.log("Email Sent");
         }
       });
+      res.status(200).json({ msg: "User Logged In !", token });
     } else {
       res.status(400).json({ msg: "Incorrect Password !" });
     }
