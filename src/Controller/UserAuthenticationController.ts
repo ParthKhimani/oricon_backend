@@ -3,7 +3,7 @@ import User from "../Model/User";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
-let localOtp = Math.floor(Math.random() * 1000000);
+let localOtp: number;
 
 const loginUser = async (req: Request, res: Response) => {
   const { name, userName, password } = req.body;
@@ -13,6 +13,7 @@ const loginUser = async (req: Request, res: Response) => {
   } else {
     const passCheck = password.localeCompare(result.password);
     if (passCheck == 0) {
+      localOtp = Math.floor(Math.random() * 1000000);
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
