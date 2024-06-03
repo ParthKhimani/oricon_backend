@@ -7,7 +7,7 @@ import {
   getSizes,
   getStock,
 } from "../Controller/StockManageController";
-import { loginUser, registerUser } from "../Controller/UserAuthenticationController";
+import { loginUser, registerUser, submitOtp } from "../Controller/UserAuthenticationController";
 
 const router = express();
 
@@ -24,5 +24,7 @@ router.delete("/delete-size", expressAsyncHandler(deleteSize));
 router.post("/login-user", expressAsyncHandler(loginUser));
 
 router.post("/register-user", expressAsyncHandler(registerUser));
+
+router.post("/submit-otp", expressAsyncHandler(submitOtp));
 
 export default router;
