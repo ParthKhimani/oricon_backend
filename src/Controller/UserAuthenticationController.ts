@@ -3,40 +3,38 @@ import User from "../Model/User";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
-let localOtp: number;
+let localOtp: string;
 
 const loginUser = async (req: Request, res: Response) => {
-  const { name, userName, password } = req.body;
+  const { userName, password } = req.body;
   const result = await User.findOne({ userName: userName });
+  localOtp = String(Math.floor(Math.random() * 1000000)).padEnd(6, "0");
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "parthkhimani48@gmail.com",
+      pass: "bxukavbknqbpcgeu",
+    },
+  });
+
+  const mailOptions = {
+    from: "parthkhimani48@gmail.com",
+    to: "oriconindia1997@gmail.com",
+    subject: "New Sign In found",
+    text: `Welcome to Oricon India,\nHere is your OTP to Sign In: ${localOtp}`,
+  };
   if (!result) {
     res.status(303).json({ msg: "User not found !" });
   } else {
     const passCheck = password.localeCompare(result.password);
     if (passCheck == 0) {
-      localOtp = Math.floor(Math.random() * 1000000);
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: "parthkhimani48@gmail.com",
-          pass: "bxukavbknqbpcgeu",
-        },
-      });
-
-      const mailOptions = {
-        from: "parthkhimani48@gmail.com",
-        to: "oriconindia1997@gmail.com",
-        subject: "New Sign In found",
-        text: `Welcome to Oricon India,\nHere is your OTP to Sign In: ${localOtp}`,
-      };
-
-      transporter.sendMail(mailOptions, function (err, res) {
+      transporter.sendMail(mailOptions, function (err) {
         if (err) {
           console.log(err);
         } else {
-          console.log("Email Sent");
+          res.status(200).json({ msg: "Otp sent to your email address !" });
         }
       });
-      res.status(200).json({ msg: "Otp sent to your email address !" });
     } else {
       res.status(400).json({ msg: "Incorrect Password !" });
     }
