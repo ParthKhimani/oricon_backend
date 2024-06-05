@@ -43,7 +43,7 @@ const loginUser = async (req: Request, res: Response) => {
 
 const submitOtp = async (req: Request, res: Response) => {
   const { otp } = req.body;
-  if (otp.localeCompare(localOtp) === 0) {
+  if (otp.padEnd(6, "0").localeCompare(localOtp) === 0) {
     const token = jwt.sign({ role: "admin" }, "secret-key");
     res.status(200).json({ msg: "user logged in", token });
   } else res.status(400).json({ msg: "Incorrect OTP!" });
