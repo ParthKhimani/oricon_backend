@@ -6,13 +6,16 @@ import Size from "../Model/Size";
 const addProduct = async (req: Request, res: Response) => {
   const { netWeight, type, size } = req.body;
   const result = await Size.findOne({ size: size });
-  const newProduct = new Product({
-    netWeight: netWeight,
-    type: type,
-    size: result?._id,
-  });
-  newProduct.save();
-  res.json({ message: "Product added successfully" });
+  if (!result) res.status(404).json({ message: "Size not found !" });
+  else {
+    const newProduct = new Product({
+      netWeight: netWeight,
+      type: type,
+      size: result?._id,
+    });
+    newProduct.save();
+    res.json({ message: "Product added successfully" });
+  }
 };
 
 const getStock = async (req: Request, res: Response) => {

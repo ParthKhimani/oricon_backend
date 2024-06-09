@@ -24,7 +24,7 @@ const loginUser = async (req: Request, res: Response) => {
     text: `Welcome to Oricon India,\nHere is your OTP to Sign In: ${localOtp}`,
   };
   if (!result) {
-    res.status(303).json({ msg: "User not found !" });
+    res.status(303).json({ message: "User not found !" });
   } else {
     const passCheck = password.localeCompare(result.password);
     if (passCheck == 0) {
@@ -32,11 +32,11 @@ const loginUser = async (req: Request, res: Response) => {
         if (err) {
           console.log(err);
         } else {
-          res.status(200).json({ msg: "Otp sent to your email address !" });
+          res.status(200).json({ message: "Otp sent to your email address !" });
         }
       });
     } else {
-      res.status(400).json({ msg: "Incorrect Password !" });
+      res.status(400).json({ message: "Incorrect Password !" });
     }
   }
 };
@@ -45,15 +45,15 @@ const submitOtp = async (req: Request, res: Response) => {
   const { otp } = req.body;
   if (otp.padEnd(6, "0").localeCompare(localOtp) === 0) {
     const token = jwt.sign({ role: "admin" }, "secret-key");
-    res.status(200).json({ msg: "user logged in", token });
-  } else res.status(400).json({ msg: "Incorrect OTP!" });
+    res.status(200).json({ message: "user logged in", token });
+  } else res.status(400).json({ message: "Incorrect OTP!" });
 };
 
 const registerUser = async (req: Request, res: Response) => {
   const { firstName, lastName, userName, password } = req.body;
   const result = await User.findOne({ userName: userName });
   if (result != null) {
-    res.status(400).json({ msg: "user already registered!" });
+    res.status(400).json({ message: "user already registered!" });
   } else {
     const newUser = new User({
       firstName: firstName,
@@ -62,7 +62,7 @@ const registerUser = async (req: Request, res: Response) => {
       password: password,
     });
     await newUser.save();
-    res.status(200).json({ msg: "user registered successfully!" });
+    res.status(200).json({ message: "user registered successfully!" });
   }
 };
 
