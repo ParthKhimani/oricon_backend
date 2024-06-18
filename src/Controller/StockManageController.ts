@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Product, { IProduct } from "../Model/Product";
+import Product from "../Model/Product";
 import { FilterStock } from "../util/FilterStock";
 import Size from "../Model/Size";
 

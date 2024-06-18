@@ -7,7 +7,12 @@ import {
   getSizes,
   getStock,
 } from "../Controller/StockManageController";
-import { loginUser, registerUser, submitOtp } from "../Controller/UserAuthenticationController";
+import {
+  loginUser,
+  registerUser,
+  submitOtp,
+} from "../Controller/UserAuthenticationController";
+import { createCompany, getCompanies } from "../Controller/CompanyController";
 
 const router = express();
 
@@ -26,5 +31,9 @@ router.post("/login-user", expressAsyncHandler(loginUser));
 router.post("/register-user", expressAsyncHandler(registerUser));
 
 router.post("/submit-otp", expressAsyncHandler(submitOtp));
+
+router.post("/create-company", expressAsyncHandler(createCompany));
+
+router.get("/get-companies", expressAsyncHandler(getCompanies));
 
 export default router;
