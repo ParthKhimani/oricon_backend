@@ -18,5 +18,5 @@ router.post("/login-user", (0, express_async_handler_1.default)(UserAuthenticati
 router.post("/register-user", (0, express_async_handler_1.default)(UserAuthenticationController_1.registerUser));
 router.post("/submit-otp", (0, express_async_handler_1.default)(UserAuthenticationController_1.submitOtp));
 router.post("/create-company", (0, express_async_handler_1.default)(CompanyController_1.createCompany));
-router.post("/get-companies", (0, express_async_handler_1.default)(CompanyController_1.getCompanies));
+router.get("/get-companies", (0, express_async_handler_1.default)(CompanyController_1.getCompanies));
 exports.default = router;

@@ -22,7 +22,7 @@ const createCompany = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.createCompany = createCompany;
 const getCompanies = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = Company_1.default.find();
+    const result = yield Company_1.default.find();
     res
         .status(200)
         .json({ message: "Companies found successfully !", data: result });

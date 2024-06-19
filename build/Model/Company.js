@@ -33,5 +33,5 @@ const companySchema = new mongoose_1.Schema({
         },
     ],
 });
-const Company = mongoose_1.default.model("Product", companySchema);
+const Company = mongoose_1.default.model("Company", companySchema);
 exports.default = Company;
