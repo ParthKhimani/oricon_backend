@@ -12,7 +12,11 @@ import {
   registerUser,
   submitOtp,
 } from "../Controller/UserAuthenticationController";
-import { createCompany, getCompanies } from "../Controller/CompanyController";
+import {
+  createCompany,
+  deleteCompany,
+  getCompanies,
+} from "../Controller/CompanyController";
 
 const router = express();
 
@@ -33,6 +37,8 @@ router.post("/register-user", expressAsyncHandler(registerUser));
 router.post("/submit-otp", expressAsyncHandler(submitOtp));
 
 router.post("/create-company", expressAsyncHandler(createCompany));
+
+router.delete("/delete-company/:id", expressAsyncHandler(deleteCompany));
 
 router.get("/get-companies", expressAsyncHandler(getCompanies));
 
