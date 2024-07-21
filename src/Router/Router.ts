@@ -4,6 +4,7 @@ import {
   addProduct,
   addSize,
   deleteSize,
+  getProduct,
   getSizes,
   getStock,
 } from "../Controller/StockManageController";
@@ -21,6 +22,8 @@ import {
 const router = express();
 
 router.post("/add-product", expressAsyncHandler(addProduct));
+
+router.post("/get-product", expressAsyncHandler(getProduct));
 
 router.get("/get-stock", expressAsyncHandler(getStock));
 

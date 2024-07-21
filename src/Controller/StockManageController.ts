@@ -21,6 +21,19 @@ const addProduct = async (req: Request, res: Response) => {
   }
 };
 
+const getProduct = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  const result = await Size.findById(id);
+  console.log(result)
+  if (!result) res.status(404).json({ message: "Product not found !" });
+  else {
+    res.json({
+      message: "Product found successfully",
+      data: { result },
+    });
+  }
+};
+
 const getStock = async (req: Request, res: Response) => {
   const result = await Product.find().populate("size");
   const seProducts = result.filter((item) => item.type === "SE");
@@ -57,4 +70,4 @@ const deleteSize = async (req: Request, res: Response) => {
   res.json({ message: "Size deleted successfully", data: {} });
 };
 
-export { addProduct, getStock, getSizes, addSize, deleteSize };
+export { addProduct, getProduct, getStock, getSizes, addSize, deleteSize };
