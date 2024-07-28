@@ -25,3 +25,12 @@ export const FilterStock = (data: IProduct[]) => {
   });
   return temp;
 };
+
+export const LatestStock = (data: IProduct[]) => {
+  let temp = data?.map((item) => ({
+    netWeight: item?.netWeight,
+    size: (item?.size as ISize)?.size,
+    id: item?._id,
+  }));
+  return temp?.slice(temp?.length - 5, temp?.length);
+};

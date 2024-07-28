@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Product from "../Model/Product";
-import { FilterStock } from "../util/FilterStock";
+import { FilterStock, LatestStock } from "../util/FilterStock";
 import Size from "../Model/Size";
 
 const addProduct = async (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ const addProduct = async (req: Request, res: Response) => {
 const getProduct = async (req: Request, res: Response) => {
   const { id } = req.body;
   const result = await Size.findById(id);
-  console.log(result)
+  console.log(result);
   if (!result) res.status(404).json({ message: "Product not found !" });
   else {
     res.json({
@@ -43,6 +43,27 @@ const getStock = async (req: Request, res: Response) => {
   res.json({
     message: "Stock found successfully",
     data: { seFilteredProducts, dpcFilteredProducts },
+  });
+};
+
+const getLatestStock = async (req: Request, res: Response) => {
+  const result = await Product.find().populate("size");
+  const seProducts = result.filter((item) => item.type === "SE");
+  const dpcProducts = result.filter((item) => item.type === "DPC");
+  const seFilteredProducts = LatestStock(seProducts);
+  const dpcFilteredProducts = LatestStock(dpcProducts);
+  res.json({
+    message: "Stock found successfully",
+    data: { seFilteredProducts, dpcFilteredProducts },
+  });
+};
+
+const deleteStock = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  await Product.findByIdAndDelete(id);
+  res.json({
+    message: "Stock deleted successfully",
+    data: {},
   });
 };
 
@@ -70,4 +91,13 @@ const deleteSize = async (req: Request, res: Response) => {
   res.json({ message: "Size deleted successfully", data: {} });
 };
 
-export { addProduct, getProduct, getStock, getSizes, addSize, deleteSize };
+export {
+  addProduct,
+  getProduct,
+  getStock,
+  getLatestStock,
+  deleteStock,
+  getSizes,
+  addSize,
+  deleteSize,
+};

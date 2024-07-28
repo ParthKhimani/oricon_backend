@@ -10,7 +10,7 @@ export interface IProduct extends Document {
 const productSchema = new Schema({
   size: { type: Schema.Types.ObjectId, ref: "Size" },
   type: { type: String, enum: ["DPC", "SE"] },
-  netWeight: Number,
+  netWeight: String,
 });
 
 const Product = mongoose.model<IProduct>("Product", productSchema);
