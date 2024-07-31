@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IProduct } from "../Model/Product";
 import { ISize } from "../Model/Size";
 
@@ -27,10 +28,17 @@ export const FilterStock = (data: IProduct[]) => {
 };
 
 export const LatestStock = (data: IProduct[]) => {
-  let temp = data?.map((item) => ({
-    netWeight: item?.netWeight,
-    size: (item?.size as ISize)?.size,
-    id: item?._id,
-  }));
-  return temp?.slice(temp?.length - 5, temp?.length);
+  let temp = data
+    ?.filter(
+      (item) =>
+        moment(item.created_at).utcOffset("+05:30").format("DD/MM/YYYY") ===
+        moment(new Date()).format("DD/MM/YYYY")
+    )
+    .map((item) => ({
+      netWeight: item?.netWeight,
+      size: (item?.size as ISize)?.size,
+      id: item?._id,
+    }));
+  return temp;
+  // return temp?.slice(temp?.length - 5, temp?.length);
 };
