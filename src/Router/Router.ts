@@ -9,6 +9,7 @@ import {
   getStock,
   getLatestStock,
   deleteStock,
+  getLastProduct,
 } from "../Controller/StockManageController";
 import {
   loginUser,
@@ -30,6 +31,8 @@ router.post("/get-product", expressAsyncHandler(getProduct));
 router.get("/get-stock", expressAsyncHandler(getStock));
 
 router.get("/get-latest-stock", expressAsyncHandler(getLatestStock));
+
+router.get("/get-last-product", expressAsyncHandler(getLastProduct));
 
 router.delete("/delete-stock/:id", expressAsyncHandler(deleteStock));
 

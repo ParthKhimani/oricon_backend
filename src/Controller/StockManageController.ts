@@ -24,7 +24,6 @@ const addProduct = async (req: Request, res: Response) => {
 const getProduct = async (req: Request, res: Response) => {
   const { id } = req.body;
   const result = await Size.findById(id);
-  console.log(result);
   if (!result) res.status(404).json({ message: "Product not found !" });
   else {
     res.json({
@@ -55,6 +54,14 @@ const getLatestStock = async (req: Request, res: Response) => {
   res.json({
     message: "Stock found successfully",
     data: { seFilteredProducts, dpcFilteredProducts },
+  });
+};
+
+const getLastProduct = async (req: Request, res: Response) => {
+  const result = await Product.find().populate("size");
+  res.json({
+    message: "Product found successfully",
+    data: result.pop(),
   });
 };
 
@@ -96,6 +103,7 @@ export {
   getProduct,
   getStock,
   getLatestStock,
+  getLastProduct,
   deleteStock,
   getSizes,
   addSize,
