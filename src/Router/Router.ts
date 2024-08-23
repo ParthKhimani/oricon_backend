@@ -40,7 +40,7 @@ router.get("/get-sizes", expressAsyncHandler(getSizes));
 
 router.post("/add-size", expressAsyncHandler(addSize));
 
-router.delete("/delete-size", expressAsyncHandler(deleteSize));
+router.delete("/delete-size/:id", expressAsyncHandler(deleteSize));
 
 router.post("/login-user", expressAsyncHandler(loginUser));
 

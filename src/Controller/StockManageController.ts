@@ -93,8 +93,8 @@ const addSize = async (req: Request, res: Response) => {
 };
 
 const deleteSize = async (req: Request, res: Response) => {
-  const { size } = req.body;
-  Size.findByIdAndDelete(size);
+  const { id } = req.params;
+  await Size.findByIdAndDelete(id);
   res.json({ message: "Size deleted successfully", data: {} });
 };
 
