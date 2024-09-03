@@ -14,7 +14,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // Adjust according to your security requirements
+    origin: "https://oricon-india.vercel.app/", // Adjust according to your security requirements
     methods: ["GET", "POST"],
   },
 });
