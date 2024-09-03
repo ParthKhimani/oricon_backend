@@ -2,6 +2,13 @@ import { Request, Response } from "express";
 import Product from "../Model/Product";
 import { FilterStock, LatestStock } from "../util/FilterStock";
 import Size from "../Model/Size";
+import { Server } from "socket.io";
+
+let io: Server;
+
+export const setIoInstance = (ioInstance: Server) => {
+  io = ioInstance;
+};
 
 const addProduct = async (req: Request, res: Response) => {
   const { netWeight, type, size } = req.body;
@@ -18,6 +25,7 @@ const addProduct = async (req: Request, res: Response) => {
       message: "Product added successfully",
       data: { id: newProduct._id },
     });
+    io.emit("product_added", { message: "Product Added" });
   }
 };
 
