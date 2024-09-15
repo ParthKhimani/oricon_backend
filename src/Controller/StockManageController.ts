@@ -65,6 +65,18 @@ const getLatestStock = async (req: Request, res: Response) => {
   });
 };
 
+const getDailyStock = async (req: Request, res: Response) => {
+  const result = await Product.find().populate("size");
+  const seProducts = result.filter((item) => item.type === "SE");
+  const dpcProducts = result.filter((item) => item.type === "DPC");
+  const seFilteredProducts = FilterStock(LatestStock(seProducts));
+  const dpcFilteredProducts = FilterStock(LatestStock(dpcProducts));
+  res.json({
+    message: "Stock found successfully",
+    data: { seFilteredProducts, dpcFilteredProducts },
+  });
+};
+
 const getLastProduct = async (req: Request, res: Response) => {
   const result = await Product.find().populate("size");
   res.json({
@@ -111,6 +123,7 @@ export {
   getProduct,
   getStock,
   getLatestStock,
+  getDailyStock,
   getLastProduct,
   deleteStock,
   getSizes,

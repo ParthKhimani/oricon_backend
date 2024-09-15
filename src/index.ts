@@ -17,6 +17,7 @@ const io = new Server(httpServer, {
     origin: "*", // Adjust according to your security requirements
     methods: ["GET", "POST"],
   },
+  path: "/socket",
 });
 setIoInstance(io);
 

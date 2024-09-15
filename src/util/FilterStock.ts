@@ -8,27 +8,46 @@ interface Stock {
   count: number;
 }
 
-export const FilterStock = (data: IProduct[]) => {
+interface LatestStock {
+  netWeight: string;
+  size: string;
+  id: any;
+}
+
+export const FilterStock = (data: IProduct[] | LatestStock[]) => {
   let temp: Stock[] = [];
   data.forEach((item) => {
-    const index = temp?.findIndex(
-      (stock) => stock.size === (item.size as ISize)?.size
-    );
-    if (index !== -1) {
-      temp[index].netWeight += Number(item.netWeight);
-      temp[index].count += 1;
-    } else
-      temp.push({
-        size: (item.size as ISize)?.size,
-        netWeight: Number(item.netWeight),
-        count: 1,
-      });
+    if (typeof item.size === "object") {
+      const index = temp?.findIndex(
+        (stock) => stock.size === (item.size as ISize)?.size
+      );
+      if (index !== -1) {
+        temp[index].netWeight += Number(item.netWeight);
+        temp[index].count += 1;
+      } else
+        temp.push({
+          size: (item.size as ISize)?.size,
+          netWeight: Number(item.netWeight),
+          count: 1,
+        });
+    } else {
+      const index = temp?.findIndex((stock) => stock.size === item.size);
+      if (index !== -1) {
+        temp[index].netWeight += Number(item.netWeight);
+        temp[index].count += 1;
+      } else
+        temp.push({
+          size: item.size,
+          netWeight: Number(item.netWeight),
+          count: 1,
+        });
+    }
   });
   return temp;
 };
 
 export const LatestStock = (data: IProduct[]) => {
-  let temp = data
+  let temp: LatestStock[] = data
     ?.filter(
       (item) =>
         moment(item.created_at).utcOffset("+05:30").format("DD/MM/YYYY") ===
