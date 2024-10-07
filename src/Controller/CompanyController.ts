@@ -8,6 +8,13 @@ const createCompany = async (req: Request, res: Response) => {
   res.status(200).json({ message: "Company created successfully !" });
 };
 
+const updateComapny = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  await Company.findByIdAndUpdate(id, { name });
+  res.status(200).json({ message: "Company updated successfully !" });
+};
+
 const deleteCompany = async (req: Request, res: Response) => {
   const { id } = req.params;
   await Company.findByIdAndDelete(id);
@@ -23,4 +30,10 @@ const getCompanies = async (req: Request, res: Response) => {
 
 const getPackingSleep = async (req: Request, res: Response) => {};
 
-export { createCompany, deleteCompany, getCompanies, getPackingSleep };
+export {
+  createCompany,
+  updateComapny,
+  deleteCompany,
+  getCompanies,
+  getPackingSleep,
+};

@@ -21,6 +21,7 @@ import {
   createCompany,
   deleteCompany,
   getCompanies,
+  updateComapny,
 } from "../Controller/CompanyController";
 
 const router = express();
@@ -52,6 +53,8 @@ router.post("/register-user", expressAsyncHandler(registerUser));
 router.post("/submit-otp", expressAsyncHandler(submitOtp));
 
 router.post("/create-company", expressAsyncHandler(createCompany));
+
+router.patch("/update-company/:id", expressAsyncHandler(updateComapny));
 
 router.delete("/delete-company/:id", expressAsyncHandler(deleteCompany));
 
