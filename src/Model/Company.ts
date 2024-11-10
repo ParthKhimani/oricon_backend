@@ -1,24 +1,14 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IProduct } from "./Product";
+import { IBill } from "./Bills";
 
 export interface ICompany extends Document {
   name: string;
-  boxes: [
-    {
-      cartoon: number;
-      products: Array<mongoose.Types.ObjectId> | Array<IProduct>;
-    }
-  ];
+  // bills: Array<mongoose.Types.ObjectId> | Array<IBill>;
 }
 
 const companySchema = new Schema({
   name: String,
-  boxes: [
-    {
-      cartoon: Number,
-      products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
-    },
-  ],
+  // bills: [{ type: Schema.Types.ObjectId, ref: "Bill" }],
 });
 
 const Company = mongoose.model<ICompany>("Company", companySchema);

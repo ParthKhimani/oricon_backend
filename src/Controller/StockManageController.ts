@@ -30,13 +30,13 @@ const addProduct = async (req: Request, res: Response) => {
 };
 
 const getProduct = async (req: Request, res: Response) => {
-  const { id } = req.body;
-  const result = await Size.findById(id);
-  if (!result) res.status(404).json({ message: "Product not found !" });
+  const { id } = req.params;
+  const result = await Product.findById(id).populate("size");
+  if (!result) res.json({ message: "Product not found !" });
   else {
     res.json({
       message: "Product found successfully",
-      data: { result },
+      data: result,
     });
   }
 };
