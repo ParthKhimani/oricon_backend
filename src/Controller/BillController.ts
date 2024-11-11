@@ -12,5 +12,16 @@ const createLoosePacking = async (req: Request, res: Response) => {
     res.json({ message: "Error in Loose Packing creation" });
   }
 };
+const getLoosePackingBills = async (req: Request, res: Response) => {
+  try {
+    const result = await LoosePacking.find().populate("company");
+    res.json({
+      message: "Loose packings found successfully",
+      data: result,
+    });
+  } catch (error) {
+    res.json({ message: "Something went wrong" });
+  }
+};
 
-export { createLoosePacking };
+export { createLoosePacking, getLoosePackingBills };
