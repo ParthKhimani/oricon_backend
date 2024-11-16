@@ -25,6 +25,7 @@ import {
 } from "../Controller/CompanyController";
 import {
   createLoosePacking,
+  deleteLoosePacking,
   getLoosePackingBills,
 } from "../Controller/BillController";
 
@@ -66,6 +67,14 @@ router.get("/get-companies", expressAsyncHandler(getCompanies));
 
 router.post("/create-loose-packing", expressAsyncHandler(createLoosePacking));
 
-router.post("/get-loose-packings", expressAsyncHandler(getLoosePackingBills));
+router.get(
+  "/get-loose-packing-bills",
+  expressAsyncHandler(getLoosePackingBills)
+);
+
+router.delete(
+  "/delete-loose-packing/:id",
+  expressAsyncHandler(deleteLoosePacking)
+);
 
 export default router;

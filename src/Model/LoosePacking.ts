@@ -7,7 +7,7 @@ export interface ILoosePacking extends Document {
 }
 
 const loosePackingSchema = new Schema<ILoosePacking>({
-  company: Schema.Types.ObjectId,
+  company: { type: Schema.Types.ObjectId, ref: "Company" },
   products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
 });
 
