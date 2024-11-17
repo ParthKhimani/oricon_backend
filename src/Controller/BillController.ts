@@ -54,4 +54,25 @@ const deleteLoosePacking = async (req: Request, res: Response) => {
   }
 };
 
-export { createLoosePacking, getLoosePackingBills, deleteLoosePacking };
+const getLoosePacking = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await LoosePacking.findById(id).populate({
+      path: "products",
+      populate: { path: "size", model: "Size" },
+    });
+    res.status(200).json({
+      message: "Loose packing found successfully",
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export {
+  createLoosePacking,
+  getLoosePackingBills,
+  deleteLoosePacking,
+  getLoosePacking,
+};
