@@ -20,7 +20,7 @@ const addProduct = async (req: Request, res: Response) => {
       type: type,
       size: result?._id,
     });
-    newProduct.save();``
+    newProduct.save();
     res.json({
       message: "Product added successfully",
       data: { id: newProduct._id },

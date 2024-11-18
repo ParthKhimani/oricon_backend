@@ -11,15 +11,20 @@ export interface IBill extends Document {
   ];
 }
 
-const billSchema = new Schema<IBill>({
-  company: Schema.Types.ObjectId,
-  boxes: [
-    {
-      cartoon: Number,
-      products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
-    },
-  ],
-});
+const billSchema = new Schema<IBill>(
+  {
+    company: Schema.Types.ObjectId,
+    boxes: [
+      {
+        cartoon: Number,
+        products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+      },
+    ],
+  },
+  {
+    timestamps: { createdAt: "created_at" },
+  }
+);
 
 const Bill = mongoose.model<IBill>("Bill", billSchema);
 

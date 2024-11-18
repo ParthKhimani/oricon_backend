@@ -6,10 +6,13 @@ export interface ILoosePacking extends Document {
   products: Array<mongoose.Types.ObjectId> | Array<IProduct>;
 }
 
-const loosePackingSchema = new Schema<ILoosePacking>({
-  company: { type: Schema.Types.ObjectId, ref: "Company" },
-  products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
-});
+const loosePackingSchema = new Schema<ILoosePacking>(
+  {
+    company: { type: Schema.Types.ObjectId, ref: "Company" },
+    products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+  },
+  { timestamps: { createdAt: "created_at" } }
+);
 
 const LoosePacking = mongoose.model<ILoosePacking>(
   "LoosePacking",

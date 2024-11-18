@@ -57,10 +57,13 @@ const deleteLoosePacking = async (req: Request, res: Response) => {
 const getLoosePacking = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const result = await LoosePacking.findById(id).populate({
-      path: "products",
-      populate: { path: "size", model: "Size" },
-    });
+    const result = await LoosePacking.findById(id).populate([
+      "company",
+      {
+        path: "products",
+        populate: { path: "size", model: "Size" },
+      },
+    ]);
     res.status(200).json({
       message: "Loose packing found successfully",
       data: result,
