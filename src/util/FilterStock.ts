@@ -4,6 +4,7 @@ import { ISize } from "../Model/Size";
 
 interface Stock {
   size: number | string;
+  type?: "SE" | "DPC";
   netWeight: number;
   count: number;
 }
@@ -11,6 +12,7 @@ interface Stock {
 interface LatestStock {
   netWeight: string;
   size: string;
+  type?: "SE" | "DPC";
   id: any;
 }
 
@@ -27,6 +29,7 @@ export const FilterStock = (data: IProduct[] | LatestStock[]) => {
       } else
         temp.push({
           size: (item.size as ISize)?.size,
+          type: item.type,
           netWeight: Number(item.netWeight),
           count: 1,
         });

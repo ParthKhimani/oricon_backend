@@ -28,6 +28,7 @@ import {
   deleteLoosePacking,
   getLoosePacking,
   getLoosePackingBills,
+  getQuantityDescription,
 } from "../Controller/BillController";
 
 const router = express();
@@ -81,6 +82,11 @@ router.delete(
 router.get(
   "/get-loose-packing/:id",
   expressAsyncHandler(getLoosePacking)
+);
+
+router.get(
+  "/get-quantity-description/:id",
+  expressAsyncHandler(getQuantityDescription)
 );
 
 export default router;

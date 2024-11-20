@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import LoosePacking from "../Model/LoosePacking";
+import { FilterStock } from "../util/FilterStock";
+import { IProduct } from "../Model/Product";
 
 const createLoosePacking = async (
   req: Request,
@@ -72,10 +74,39 @@ const getLoosePacking = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+const getQuantityDescription = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await LoosePacking.findById(id).populate([
+      "company",
+      {
+        path: "products",
+        populate: { path: "size", model: "Size" },
+      },
+    ]);
+
+    const updatedProducts = result
+      ? FilterStock(result.products as Array<IProduct>)
+      : [];
+
+    const updatedResponse = {
+      ...result?.toObject(),
+      products: updatedProducts,
+    };
+
+    res.status(200).json({
+      message: "Quantity Description found successfully",
+      data: updatedResponse,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
 
 export {
   createLoosePacking,
   getLoosePackingBills,
   deleteLoosePacking,
   getLoosePacking,
+  getQuantityDescription,
 };
