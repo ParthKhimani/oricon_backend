@@ -1,20 +1,47 @@
 import { Request, Response } from "express";
 import LoosePacking from "../Model/LoosePacking";
 import { FilterStock } from "../util/FilterStock";
-import { IProduct } from "../Model/Product";
+import Product, { IProduct } from "../Model/Product";
+import Size from "../Model/Size";
 
 const createLoosePacking = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { company, products } = req.body;
+    let { company, products } = req.body;
     if (!company) {
       throw new Error("Please select company");
     }
     if (!products || !Array.isArray(products) || products.length === 0) {
       throw new Error("Please add at least one product");
     }
+    products = await Promise.all(
+      products.map(async (product) => {
+        if (typeof product !== "string") {
+          try {
+            const result = await Size.findOne({ size: product.size });
+            if (!result) {
+              throw new Error(`Size ${product.size} not found`);
+            }
+            const newProduct = new Product({
+              netWeight: product.netWeight,
+              type: product.type,
+              size: result._id,
+            });
+            await newProduct.save();
+            return newProduct._id;
+          } catch (error) {
+            res
+              .status(500)
+              .json({ message: "Something went wrong with product creation" });
+            return;
+          }
+        } else {
+          return product;
+        }
+      })
+    );
     await LoosePacking.create({ company, products });
     res.json({
       message: "Loose packing created successfully",
