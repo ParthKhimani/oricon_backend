@@ -20,10 +20,10 @@ export const FilterStock = (data: IProduct[] | LatestStock[]) => {
   let temp: Stock[] = [];
   data.forEach((item) => {
     if (typeof item.size === "object") {
-      const index = temp?.findIndex(
+      const index = temp?.findLastIndex(
         (stock) => stock.size === (item.size as ISize)?.size
       );
-      if (index !== -1) {
+      if (index !== -1 && temp[index].type === item.type) {
         temp[index].netWeight += Number(item.netWeight);
         temp[index].count += 1;
       } else
@@ -34,8 +34,8 @@ export const FilterStock = (data: IProduct[] | LatestStock[]) => {
           count: 1,
         });
     } else {
-      const index = temp?.findIndex((stock) => stock.size === item.size);
-      if (index !== -1) {
+      const index = temp?.findLastIndex((stock) => stock.size === item.size);
+      if (index !== -1 && temp[index].type === item.type) {
         temp[index].netWeight += Number(item.netWeight);
         temp[index].count += 1;
       } else
