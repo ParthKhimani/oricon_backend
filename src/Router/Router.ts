@@ -29,6 +29,7 @@ import {
   getLoosePacking,
   getLoosePackingBills,
   getQuantityDescription,
+  updateLoosePacking,
 } from "../Controller/BillController";
 
 const router = express();
@@ -69,6 +70,11 @@ router.get("/get-companies", expressAsyncHandler(getCompanies));
 
 router.post("/create-loose-packing", expressAsyncHandler(createLoosePacking));
 
+router.patch(
+  "/update-loose-packing/:id",
+  expressAsyncHandler(updateLoosePacking)
+);
+
 router.get(
   "/get-loose-packing-bills",
   expressAsyncHandler(getLoosePackingBills)
@@ -79,10 +85,7 @@ router.delete(
   expressAsyncHandler(deleteLoosePacking)
 );
 
-router.get(
-  "/get-loose-packing/:id",
-  expressAsyncHandler(getLoosePacking)
-);
+router.get("/get-loose-packing/:id", expressAsyncHandler(getLoosePacking));
 
 router.get(
   "/get-quantity-description/:id",

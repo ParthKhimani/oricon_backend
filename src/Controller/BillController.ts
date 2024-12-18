@@ -59,6 +59,59 @@ const createLoosePacking = async (
   }
 };
 
+const updateLoosePacking = async (req: Request, res: Response) => {
+  try {
+    let { id } = req.params;
+    let { company, products } = req.body;
+    if (!company) {
+      throw new Error("Please select company");
+    }
+    if (!products || !Array.isArray(products) || products.length === 0) {
+      throw new Error("Please add at least one product");
+    }
+    products = await Promise.all(
+      products.map(async (product) => {
+        if (typeof product !== "string") {
+          try {
+            const result = await Size.findOne({ size: product.size });
+            if (!result) {
+              throw new Error(`Size ${product.size} not found`);
+            }
+            const newProduct = new Product({
+              netWeight: product.netWeight,
+              type: product.type,
+              size: result._id,
+            });
+            await newProduct.save();
+            return newProduct._id;
+          } catch (error) {
+            res
+              .status(500)
+              .json({ message: "Something went wrong with product creation" });
+            return;
+          }
+        } else {
+          return product;
+        }
+      })
+    );
+    await LoosePacking.findByIdAndUpdate(id, { company, products });
+    res.json({
+      message: "Loose packing updated successfully",
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(400).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+};
+
 const getLoosePackingBills = async (req: Request, res: Response) => {
   try {
     const result = await LoosePacking.find().populate("company");
@@ -132,6 +185,7 @@ const getQuantityDescription = async (req: Request, res: Response) => {
 
 export {
   createLoosePacking,
+  updateLoosePacking,
   getLoosePackingBills,
   deleteLoosePacking,
   getLoosePacking,
