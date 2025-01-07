@@ -1,50 +1,59 @@
 import { Request, Response } from "express";
-import LoosePacking from "../Model/LoosePacking";
+import Bill from "../Model/Bills";
 import { FilterStock } from "../util/FilterStock";
 import Product, { IProduct } from "../Model/Product";
 import Size from "../Model/Size";
 
-const createLoosePacking = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const createBill = async (req: Request, res: Response): Promise<void> => {
   try {
-    let { company, products } = req.body;
+    let { company, boxes } = req.body;
     if (!company) {
       throw new Error("Please select company");
     }
-    if (!products || !Array.isArray(products) || products.length === 0) {
+    if (!boxes || !Array.isArray(boxes) || boxes.length === 0) {
       throw new Error("Please add at least one product");
     }
-    products = await Promise.all(
-      products.map(async (product) => {
-        if (typeof product !== "string") {
-          try {
-            const result = await Size.findOne({ size: product.size });
-            if (!result) {
-              throw new Error(`Size ${product.size} not found`);
+
+    boxes = await Promise.all(
+      boxes.map(async (box) => {
+        const processedProducts = await Promise.all(
+          box.products.map(async (product: IProduct | string) => {
+            if (typeof product !== "string") {
+              try {
+                const result = await Size.findOne({
+                  size: product.size as unknown as string,
+                });
+                if (!result) {
+                  throw new Error(`Size ${product.size} not found`);
+                }
+                const newProduct = new Product({
+                  netWeight: product.netWeight,
+                  type: product.type,
+                  size: result._id,
+                });
+                await newProduct.save();
+                return newProduct._id;
+              } catch (error) {
+                res.status(500).json({
+                  message: "Something went wrong with product creation",
+                });
+                return;
+              }
+            } else {
+              return product;
             }
-            const newProduct = new Product({
-              netWeight: product.netWeight,
-              type: product.type,
-              size: result._id,
-            });
-            await newProduct.save();
-            return newProduct._id;
-          } catch (error) {
-            res
-              .status(500)
-              .json({ message: "Something went wrong with product creation" });
-            return;
-          }
-        } else {
-          return product;
-        }
+          })
+        );
+        return {
+          cartoon: box.cartoon,
+          products: processedProducts,
+        };
       })
     );
-    await LoosePacking.create({ company, products });
+
+    await Bill.create({ company, boxes });
     res.json({
-      message: "Loose packing created successfully",
+      message: "Cartoon dispatch created successfully",
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -59,45 +68,47 @@ const createLoosePacking = async (
   }
 };
 
-const updateLoosePacking = async (req: Request, res: Response) => {
+const updateBill = async (req: Request, res: Response) => {
   try {
     let { id } = req.params;
-    let { company, products } = req.body;
+    let { company, boxes } = req.body;
     if (!company) {
       throw new Error("Please select company");
     }
-    if (!products || !Array.isArray(products) || products.length === 0) {
+    if (!boxes || !Array.isArray(boxes) || boxes.length === 0) {
       throw new Error("Please add at least one product");
     }
-    products = await Promise.all(
-      products.map(async (product) => {
-        if (typeof product !== "string") {
-          try {
-            const result = await Size.findOne({ size: product.size });
-            if (!result) {
-              throw new Error(`Size ${product.size} not found`);
+    boxes = await Promise.all(
+      boxes
+        .flatMap((box) => box.products)
+        .map(async (product) => {
+          if (typeof product !== "string") {
+            try {
+              const result = await Size.findOne({ size: product.size });
+              if (!result) {
+                throw new Error(`Size ${product.size} not found`);
+              }
+              const newProduct = new Product({
+                netWeight: product.netWeight,
+                type: product.type,
+                size: result._id,
+              });
+              await newProduct.save();
+              return newProduct._id;
+            } catch (error) {
+              res.status(500).json({
+                message: "Something went wrong with product creation",
+              });
+              return;
             }
-            const newProduct = new Product({
-              netWeight: product.netWeight,
-              type: product.type,
-              size: result._id,
-            });
-            await newProduct.save();
-            return newProduct._id;
-          } catch (error) {
-            res
-              .status(500)
-              .json({ message: "Something went wrong with product creation" });
-            return;
+          } else {
+            return product;
           }
-        } else {
-          return product;
-        }
-      })
+        })
     );
-    await LoosePacking.findByIdAndUpdate(id, { company, products });
+    await Bill.findByIdAndUpdate(id, { company, boxes });
     res.json({
-      message: "Loose packing updated successfully",
+      message: "Cartoon dispatch updated successfully",
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -112,11 +123,12 @@ const updateLoosePacking = async (req: Request, res: Response) => {
   }
 };
 
-const getLoosePackingBills = async (req: Request, res: Response) => {
+const getBills = async (req: Request, res: Response) => {
   try {
-    const result = await LoosePacking.find().populate("company");
+    const result = await Bill.find().populate("company");
+
     res.json({
-      message: "Loose packings found successfully",
+      message: "Cartoon dispatches found successfully",
       data: result,
     });
   } catch (error) {
@@ -124,22 +136,22 @@ const getLoosePackingBills = async (req: Request, res: Response) => {
   }
 };
 
-const deleteLoosePacking = async (req: Request, res: Response) => {
+const deleteBill = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    await LoosePacking.findByIdAndDelete(id);
+    await Bill.findByIdAndDelete(id);
     res.status(200).json({
-      message: "Loose packing deleted successfully",
+      message: "Cartoon dispatch deleted successfully",
     });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
 
-const getLoosePacking = async (req: Request, res: Response) => {
+const getBill = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const result = await LoosePacking.findById(id).populate([
+    const result = await Bill.findById(id).populate([
       "company",
       {
         path: "products",
@@ -147,47 +159,44 @@ const getLoosePacking = async (req: Request, res: Response) => {
       },
     ]);
     res.status(200).json({
-      message: "Loose packing found successfully",
+      message: "Cartoon dispatch found successfully",
       data: result,
     });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
-const getQuantityDescription = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const result = await LoosePacking.findById(id).populate([
-      "company",
-      {
-        path: "products",
-        populate: { path: "size", model: "Size" },
-      },
-    ]);
-
-    const updatedProducts = result
-      ? FilterStock(result.products as Array<IProduct>)
-      : [];
-
-    const updatedResponse = {
-      ...result?.toObject(),
-      products: updatedProducts,
-    };
-
-    res.status(200).json({
-      message: "Quantity Description found successfully",
-      data: updatedResponse,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
-  }
+const getQuantityDescriptionBill = async (req: Request, res: Response) => {
+  //   try {
+  //     const { id } = req.params;
+  //     const result = await Bill.findById(id).populate([
+  //       "company",
+  //       {
+  //         path: "products",
+  //         populate: { path: "size", model: "Size" },
+  //       },
+  //     ]);
+  //     const updatedProducts = result
+  //       ? FilterStock(result.products as Array<IProduct>)
+  //       : [];
+  //     const updatedResponse = {
+  //       ...result?.toObject(),
+  //       products: updatedProducts,
+  //     };
+  //     res.status(200).json({
+  //       message: "Quantity Description found successfully",
+  //       data: updatedResponse,
+  //     });
+  //   } catch (error) {
+  //     res.status(500).json({ message: "Something went wrong" });
+  //   }
 };
 
 export {
-  createLoosePacking,
-  updateLoosePacking,
-  getLoosePackingBills,
-  deleteLoosePacking,
-  getLoosePacking,
-  getQuantityDescription,
+  createBill,
+  updateBill,
+  getBills,
+  deleteBill,
+  getBill,
+  getQuantityDescriptionBill,
 };

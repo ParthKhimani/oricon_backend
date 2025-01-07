@@ -13,7 +13,7 @@ export interface IBill extends Document {
 
 const billSchema = new Schema<IBill>(
   {
-    company: Schema.Types.ObjectId,
+    company: { type: Schema.Types.ObjectId, ref: "Company" },
     boxes: [
       {
         cartoon: Number,

@@ -30,7 +30,8 @@ import {
   getLoosePackingBills,
   getQuantityDescription,
   updateLoosePacking,
-} from "../Controller/BillController";
+} from "../Controller/LoosePackingController";
+import { createBill, deleteBill, getBill, getBills, getQuantityDescriptionBill, updateBill } from "../Controller/BillController";
 
 const router = express();
 
@@ -90,6 +91,27 @@ router.get("/get-loose-packing/:id", expressAsyncHandler(getLoosePacking));
 router.get(
   "/get-quantity-description/:id",
   expressAsyncHandler(getQuantityDescription)
+);
+
+router.post("/create-cartoon", expressAsyncHandler(createBill));
+
+router.patch("/update-cartoon/:id", expressAsyncHandler(updateBill));
+
+router.get(
+  "/get-cartoon-bills",
+  expressAsyncHandler(getBills)
+);
+
+router.delete(
+  "/delete-cartoon/:id",
+  expressAsyncHandler(deleteBill)
+);
+
+router.get("/get-cartoon/:id", expressAsyncHandler(getBill));
+
+router.get(
+  "/get-quantity-description-cartoon/:id",
+  expressAsyncHandler(getQuantityDescriptionBill)
 );
 
 export default router;
