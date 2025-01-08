@@ -154,7 +154,7 @@ const getBill = async (req: Request, res: Response) => {
     const result = await Bill.findById(id).populate([
       "company",
       {
-        path: "products",
+        path: "boxes.products",
         populate: { path: "size", model: "Size" },
       },
     ]);
@@ -167,29 +167,31 @@ const getBill = async (req: Request, res: Response) => {
   }
 };
 const getQuantityDescriptionBill = async (req: Request, res: Response) => {
-  //   try {
-  //     const { id } = req.params;
-  //     const result = await Bill.findById(id).populate([
-  //       "company",
-  //       {
-  //         path: "products",
-  //         populate: { path: "size", model: "Size" },
-  //       },
-  //     ]);
-  //     const updatedProducts = result
-  //       ? FilterStock(result.products as Array<IProduct>)
-  //       : [];
-  //     const updatedResponse = {
-  //       ...result?.toObject(),
-  //       products: updatedProducts,
-  //     };
-  //     res.status(200).json({
-  //       message: "Quantity Description found successfully",
-  //       data: updatedResponse,
-  //     });
-  //   } catch (error) {
-  //     res.status(500).json({ message: "Something went wrong" });
-  //   }
+  try {
+    const { id } = req.params;
+    const result = await Bill.findById(id).populate([
+      "company",
+      {
+        path: "boxes.products",
+        populate: { path: "size", model: "Size" },
+      },
+    ]);
+    const updatedProducts = result
+      ? FilterStock(
+          result.boxes.flatMap((box) => box.products as Array<IProduct>)
+        )
+      : [];
+    const updatedResponse = {
+      ...result?.toObject(),
+      products: updatedProducts,
+    };
+    res.status(200).json({
+      message: "Quantity Description found successfully",
+      data: updatedResponse,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
 };
 
 export {

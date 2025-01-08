@@ -164,7 +164,6 @@ const getQuantityDescription = async (req: Request, res: Response) => {
         populate: { path: "size", model: "Size" },
       },
     ]);
-    console.log(result);
 
     const updatedProducts = result
       ? FilterStock(result.products as Array<IProduct>)
