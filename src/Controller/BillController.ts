@@ -79,32 +79,40 @@ const updateBill = async (req: Request, res: Response) => {
       throw new Error("Please add at least one product");
     }
     boxes = await Promise.all(
-      boxes
-        .flatMap((box) => box.products)
-        .map(async (product) => {
-          if (typeof product !== "string") {
-            try {
-              const result = await Size.findOne({ size: product.size });
-              if (!result) {
-                throw new Error(`Size ${product.size} not found`);
+      boxes.map(async (box) => {
+        const processedProducts = await Promise.all(
+          box.products.map(async (product: IProduct | string) => {
+            if (typeof product !== "string") {
+              try {
+                const result = await Size.findOne({
+                  size: product.size as unknown as string,
+                });
+                if (!result) {
+                  throw new Error(`Size ${product.size} not found`);
+                }
+                const newProduct = new Product({
+                  netWeight: product.netWeight,
+                  type: product.type,
+                  size: result._id,
+                });
+                await newProduct.save();
+                return newProduct._id;
+              } catch (error) {
+                res.status(500).json({
+                  message: "Something went wrong with product creation",
+                });
+                return;
               }
-              const newProduct = new Product({
-                netWeight: product.netWeight,
-                type: product.type,
-                size: result._id,
-              });
-              await newProduct.save();
-              return newProduct._id;
-            } catch (error) {
-              res.status(500).json({
-                message: "Something went wrong with product creation",
-              });
-              return;
+            } else {
+              return product;
             }
-          } else {
-            return product;
-          }
-        })
+          })
+        );
+        return {
+          cartoon: box.cartoon,
+          products: processedProducts,
+        };
+      })
     );
     await Bill.findByIdAndUpdate(id, { company, boxes });
     res.json({
