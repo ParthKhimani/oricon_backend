@@ -114,7 +114,9 @@ const updateLoosePacking = async (req: Request, res: Response) => {
 
 const getLoosePackingBills = async (req: Request, res: Response) => {
   try {
-    const result = await LoosePacking.find().populate("company");
+    const result = await LoosePacking.find()
+      .populate("company")
+      .sort({ created_at: -1 });
     res.json({
       message: "Loose packings found successfully",
       data: result,

@@ -133,7 +133,9 @@ const updateBill = async (req: Request, res: Response) => {
 
 const getBills = async (req: Request, res: Response) => {
   try {
-    const result = await Bill.find().populate("company");
+    const result = await Bill.find()
+      .populate("company")
+      .sort({ created_at: -1 });
 
     res.json({
       message: "Cartoon dispatches found successfully",
