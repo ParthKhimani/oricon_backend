@@ -8,18 +8,18 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import { setIoInstance } from "./Controller/StockManageController";
+// import { setIoInstance } from "./Controller/StockManageController";
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*", // Adjust according to your security requirements
-    methods: ["GET", "POST"],
-  },
-  path: "/socket",
-});
-setIoInstance(io);
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "*", // Adjust according to your security requirements
+//     methods: ["GET", "POST"],
+//   },
+//   path: "/socket",
+// });
+// setIoInstance(io);
 
 app.use(cors());
 app.use(bodyParser.json());

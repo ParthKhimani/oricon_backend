@@ -2,13 +2,7 @@ import { Request, Response } from "express";
 import Product from "../Model/Product";
 import { FilterStock, LatestStock } from "../util/FilterStock";
 import Size from "../Model/Size";
-import { Server } from "socket.io";
-
-let io: Server;
-
-export const setIoInstance = (ioInstance: Server) => {
-  io = ioInstance;
-};
+import Pusher from "pusher";
 
 const addProduct = async (req: Request, res: Response) => {
   const { netWeight, type, size } = req.body;
@@ -25,7 +19,17 @@ const addProduct = async (req: Request, res: Response) => {
       message: "Product added successfully",
       data: { id: newProduct._id },
     });
-    io.emit("product_added", { message: "Product Added" });
+    const pusher = new Pusher({
+      appId: process.env.APP_ID || "",
+      key: process.env.PUSHER_KEY || "",
+      secret: process.env.PUSHER_SECRET || "",
+      cluster: process.env.CLUSTER || "",
+      useTLS: Boolean(process.env.USE_TLS) || true,
+    });
+
+    pusher.trigger("my-channel", "data-update", {
+      message: "hello world",
+    });
   }
 };
 
