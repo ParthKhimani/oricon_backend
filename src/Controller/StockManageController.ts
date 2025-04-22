@@ -15,10 +15,6 @@ const addProduct = async (req: Request, res: Response) => {
       size: result?._id,
     });
     newProduct.save();
-    res.json({
-      message: "Product added successfully",
-      data: { id: newProduct._id },
-    });
     const pusher = new Pusher({
       appId: process.env.APP_ID || "",
       key: process.env.PUSHER_KEY || "",
@@ -27,8 +23,12 @@ const addProduct = async (req: Request, res: Response) => {
       useTLS: Boolean(process.env.USE_TLS) || true,
     });
 
-    pusher.trigger("my-channel", "data-update", {
+    await pusher.trigger("my-channel", "data-update", {
       message: "hello world",
+    });
+    res.json({
+      message: "Product added successfully",
+      data: { id: newProduct._id },
     });
   }
 };
