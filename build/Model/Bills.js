@@ -24,12 +24,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const productSchema = new mongoose_1.Schema({
-    size: { type: mongoose_1.Schema.Types.ObjectId, ref: "Size" },
-    type: { type: String, enum: ["DPC", "SE"] },
-    netWeight: String,
+const billSchema = new mongoose_1.Schema({
+    company: { type: mongoose_1.Schema.Types.ObjectId, ref: "Company" },
+    boxes: [
+        {
+            cartoon: Number,
+            products: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Product" }],
+        },
+    ],
 }, {
     timestamps: { createdAt: "created_at" },
 });
-const Product = mongoose_1.default.model("Product", productSchema);
-exports.default = Product;
+const Bill = mongoose_1.default.model("Bill", billSchema);
+exports.default = Bill;

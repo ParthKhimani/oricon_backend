@@ -24,12 +24,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const productSchema = new mongoose_1.Schema({
-    size: { type: mongoose_1.Schema.Types.ObjectId, ref: "Size" },
-    type: { type: String, enum: ["DPC", "SE"] },
-    netWeight: String,
-}, {
-    timestamps: { createdAt: "created_at" },
-});
-const Product = mongoose_1.default.model("Product", productSchema);
-exports.default = Product;
+const loosePackingSchema = new mongoose_1.Schema({
+    company: { type: mongoose_1.Schema.Types.ObjectId, ref: "Company" },
+    products: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Product" }],
+}, { timestamps: { createdAt: "created_at" } });
+const LoosePacking = mongoose_1.default.model("LoosePacking", loosePackingSchema);
+exports.default = LoosePacking;

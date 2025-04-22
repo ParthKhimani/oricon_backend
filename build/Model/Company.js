@@ -26,12 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const companySchema = new mongoose_1.Schema({
     name: String,
-    boxes: [
-        {
-            cartoon: Number,
-            products: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Product" }],
-        },
-    ],
+    // bills: [{ type: Schema.Types.ObjectId, ref: "Bill" }],
 });
 const Company = mongoose_1.default.model("Company", companySchema);
 exports.default = Company;
