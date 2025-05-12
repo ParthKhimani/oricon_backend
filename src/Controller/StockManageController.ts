@@ -46,27 +46,47 @@ const getProduct = async (req: Request, res: Response) => {
 };
 
 const getStock = async (req: Request, res: Response) => {
-  const result = await Product.find().populate("size");
-  const seProducts = result.filter((item) => item.type === "SE");
-  const dpcProducts = result.filter((item) => item.type === "DPC");
+  const [seProducts, dpcProducts] = await Promise.all([
+    Product.find({ type: "SE" }).populate("size").lean(),
+    Product.find({ type: "DPC" }).populate("size").lean(),
+  ]);
   const seFilteredProducts = FilterStock(seProducts);
   const dpcFilteredProducts = FilterStock(dpcProducts);
   res.json({
     message: "Stock found successfully",
     data: { seFilteredProducts, dpcFilteredProducts },
   });
+  // const result = await Product.find().populate("size");
+  // const seProducts = result.filter((item) => item.type === "SE");
+  // const dpcProducts = result.filter((item) => item.type === "DPC");
+  // const seFilteredProducts = FilterStock(seProducts);
+  // const dpcFilteredProducts = FilterStock(dpcProducts);
+  // res.json({
+  //   message: "Stock found successfully",
+  //   data: { seFilteredProducts, dpcFilteredProducts },
+  // });
 };
 
 const getLatestStock = async (req: Request, res: Response) => {
-  const result = await Product.find().populate("size");
-  const seProducts = result.filter((item) => item.type === "SE");
-  const dpcProducts = result.filter((item) => item.type === "DPC");
+  const [seProducts, dpcProducts] = await Promise.all([
+    Product.find({ type: "SE" }).populate("size").lean(),
+    Product.find({ type: "DPC" }).populate("size").lean(),
+  ]);
   const seFilteredProducts = LatestStock(seProducts);
   const dpcFilteredProducts = LatestStock(dpcProducts);
   res.json({
     message: "Stock found successfully",
     data: { seFilteredProducts, dpcFilteredProducts },
   });
+  // const result = await Product.find().populate("size");
+  // const seProducts = result.filter((item) => item.type === "SE");
+  // const dpcProducts = result.filter((item) => item.type === "DPC");
+  // const seFilteredProducts = LatestStock(seProducts);
+  // const dpcFilteredProducts = LatestStock(dpcProducts);
+  // res.json({
+  //   message: "Stock found successfully",
+  //   data: { seFilteredProducts, dpcFilteredProducts },
+  // });
 };
 
 const getDailyStock = async (req: Request, res: Response) => {

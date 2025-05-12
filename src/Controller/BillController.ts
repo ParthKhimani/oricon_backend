@@ -6,7 +6,7 @@ import Size from "../Model/Size";
 
 const createBill = async (req: Request, res: Response): Promise<void> => {
   try {
-    let { company, boxes } = req.body;
+    let { company, boxes, cartoonType } = req.body;
     if (!company) {
       throw new Error("Please select company");
     }
@@ -51,7 +51,7 @@ const createBill = async (req: Request, res: Response): Promise<void> => {
       })
     );
 
-    await Bill.create({ company, boxes });
+    await Bill.create({ company, boxes, cartoonType });
     res.json({
       message: "Cartoon dispatch created successfully",
     });
@@ -71,7 +71,7 @@ const createBill = async (req: Request, res: Response): Promise<void> => {
 const updateBill = async (req: Request, res: Response) => {
   try {
     let { id } = req.params;
-    let { company, boxes } = req.body;
+    let { company, boxes, cartoonType } = req.body;
     if (!company) {
       throw new Error("Please select company");
     }
@@ -114,7 +114,7 @@ const updateBill = async (req: Request, res: Response) => {
         };
       })
     );
-    await Bill.findByIdAndUpdate(id, { company, boxes });
+    await Bill.findByIdAndUpdate(id, { company, boxes, cartoonType });
     res.json({
       message: "Cartoon dispatch updated successfully",
     });
@@ -133,7 +133,7 @@ const updateBill = async (req: Request, res: Response) => {
 
 const getBills = async (req: Request, res: Response) => {
   try {
-    const result = await Bill.find()
+    const result = await Bill.find({ cartoonType: req.query.cartoonType })
       .populate("company")
       .sort({ created_at: -1 });
 

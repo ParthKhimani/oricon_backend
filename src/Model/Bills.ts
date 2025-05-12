@@ -9,6 +9,7 @@ export interface IBill extends Document {
       products: Array<mongoose.Types.ObjectId> | Array<IProduct>;
     }
   ];
+  cartoonType: number;
 }
 
 const billSchema = new Schema<IBill>(
@@ -20,6 +21,7 @@ const billSchema = new Schema<IBill>(
         products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
       },
     ],
+    cartoonType: Number,
   },
   {
     timestamps: { createdAt: "created_at" },
