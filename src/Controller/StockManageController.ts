@@ -23,9 +23,10 @@ const addProduct = async (req: Request, res: Response) => {
       useTLS: Boolean(process.env.USE_TLS) || true,
     });
 
-    await pusher.trigger("my-channel", "data-update", {
-      message: "hello world",
-    });
+    if (type !== "DPC")
+      await pusher.trigger("my-channel", "data-update", {
+        message: "hello world",
+      });
     res.json({
       message: "Product added successfully",
       data: { id: newProduct._id },
