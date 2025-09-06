@@ -69,26 +69,76 @@ const getStock = async (req: Request, res: Response) => {
 };
 
 const getLatestStock = async (req: Request, res: Response) => {
-  const [seProducts, dpcProducts] = await Promise.all([
-    Product.find({ type: "SE" }).populate("size").lean(),
-    Product.find({ type: "DPC" }).populate("size").lean(),
-  ]);
-  const seFilteredProducts = LatestStock(seProducts);
-  const dpcFilteredProducts = LatestStock(dpcProducts);
-  res.json({
-    message: "Stock found successfully",
-    data: { seFilteredProducts, dpcFilteredProducts },
-  });
-  // const result = await Product.find().populate("size");
-  // const seProducts = result.filter((item) => item.type === "SE");
-  // const dpcProducts = result.filter((item) => item.type === "DPC");
-  // const seFilteredProducts = LatestStock(seProducts);
-  // const dpcFilteredProducts = LatestStock(dpcProducts);
-  // res.json({
-  //   message: "Stock found successfully",
-  //   data: { seFilteredProducts, dpcFilteredProducts },
-  // });
+  try {
+    const [seProducts, dpcProducts] = await Promise.all([
+      Product.aggregate([
+        { $match: { type: "SE" } },
+        { $sort: { createdAt: -1 } },
+        // { $group: { _id: "$sku", doc: { $first: "$$ROOT" } } }, // keep only latest per SKU
+        // { $replaceRoot: { newRoot: "$doc" } },
+        {
+          $lookup: {
+            from: "sizes", // collection name for Size
+            localField: "size",
+            foreignField: "_id",
+            as: "size",
+          },
+        },
+        { $unwind: "$size" },
+      ]),
+      Product.aggregate([
+        { $match: { type: "DPC" } },
+        { $sort: { createdAt: -1 } },
+        // { $group: { _id: "$sku", doc: { $first: "$$ROOT" } } },
+        // { $replaceRoot: { newRoot: "$doc" } },
+        {
+          $lookup: {
+            from: "sizes",
+            localField: "size",
+            foreignField: "_id",
+            as: "size",
+          },
+        },
+        { $unwind: "$size" },
+      ]),
+    ]);
+
+    // console.log(seProducts);
+    // console.log(dpcProducts);
+
+    const seFilteredProducts = LatestStock(seProducts);
+    const dpcFilteredProducts = LatestStock(dpcProducts);
+
+    res.json({
+      message: "Stock found successfully",
+      data: { seFilteredProducts, dpcFilteredProducts },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching stock", error });
+  }
 };
+
+// const getLatestStock = async (req: Request, res: Response) => {
+//   const [seProducts, dpcProducts] = await Promise.all([
+//     Product.find({ type: "SE" }).populate("size").lean(),
+//     Product.find({ type: "DPC" }).populate("size").lean(),
+//   ]);
+//   const seFilteredProducts = LatestStock(seProducts);
+//   const dpcFilteredProducts = LatestStock(dpcProducts);
+//   res.json({
+//     message: "Stock found successfully",
+//     data: { seFilteredProducts, dpcFilteredProducts },
+//   });
+//   // const result = await Product.find().populate("size");
+//   // const seProducts = result.filter((item) => item.type === "SE");
+//   // const dpcProducts = result.filter((item) => item.type === "DPC");
+//   // const seFilteredProducts = LatestStock(seProducts);
+//   // const dpcFilteredProducts = LatestStock(dpcProducts);
+//   // res.json({
+//   //   message: "Stock found successfully",
+//   //   data: { seFilteredProducts, dpcFilteredProducts },
+//   // });
+// };
 
 const getDailyStock = async (req: Request, res: Response) => {
   const result = await Product.find().populate("size");
@@ -103,12 +153,31 @@ const getDailyStock = async (req: Request, res: Response) => {
 };
 
 const getLastProduct = async (req: Request, res: Response) => {
-  const result = await Product.find().populate("size");
-  res.json({
-    message: "Product found successfully",
-    data: result.pop(),
-  });
+  try {
+    const lastProduct = await Product.findOne({ type: "SE" })
+      .populate("size")
+      .sort({ created_at: -1 }); // assumes you have timestamps enabled
+
+    // if (!lastProduct) {
+    //   return res.status(404).json({ message: "No product found" });
+    // }
+
+    res.json({
+      message: "Product found successfully",
+      data: lastProduct,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
 };
+
+// const getLastProduct = async (req: Request, res: Response) => {
+//   const result = await Product.find().populate("size");
+//   res.json({
+//     message: "Product found successfully",
+//     data: result.pop(),
+//   });
+// };
 
 const deleteStock = async (req: Request, res: Response) => {
   const { id } = req.params;
