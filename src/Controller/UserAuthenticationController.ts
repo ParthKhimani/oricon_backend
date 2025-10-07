@@ -12,14 +12,14 @@ const loginUser = async (req: Request, res: Response) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "parthkhimani48@gmail.com",
-      pass: "bxukavbknqbpcgeu",
+      user: "oriconindia1997@gmail.com",
+      pass: process.env.APP_PASSWORD,
     },
   });
 
   const mailOptions = {
-    from: "parthkhimani48@gmail.com",
-    to: "oriconindia1997@gmail.com",
+    from: "oriconindia1997@gmail.com",
+    to: "akhilchapla14@gmail.com",
     subject: "New Sign In found",
     text: `Welcome to Oricon India,\nHere is your OTP to Sign In: ${localOtp}`,
   };
